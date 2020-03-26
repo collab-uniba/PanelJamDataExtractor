@@ -240,7 +240,7 @@ def findAuthors():
     i = 1
 
     #estrazione di tutti gli autori
-    while i < last:
+    while i <= last:
         try:
             if i != 257:            
                 url ='https://www.paneljam.com/stars/?page=' + str(i)
