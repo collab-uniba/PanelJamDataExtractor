@@ -237,10 +237,10 @@ def findAuthors():
         except rq.ConnectionError:
             time.sleep(60)
             
-    i = 120
+    i = 1
 
     #estrazione di tutti gli autori
-    while i < 121:
+    while i < last:
         try:
             if i != 257:            
                 url ='https://www.paneljam.com/stars/?page=' + str(i)
