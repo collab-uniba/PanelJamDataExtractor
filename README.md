@@ -24,5 +24,5 @@ $ pip setup.py install
 
 ## Inspiration
 This project is inspired by the article "Investigating Crowd Creativity in Online Music Communities"
-by professor Fabio Calefato(University of Bari, Italy), professor Filippo Lanubile(University of Bari, Italy),
+by Professor Fabio Calefato(University of Bari, Italy), Professor Filippo Lanubile(University of Bari, Italy),
 Giuseppe Iaffaldano(University of Bari, Italy), Federico Maiorano(University of Bari, Italy)
