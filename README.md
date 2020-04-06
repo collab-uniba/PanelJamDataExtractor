@@ -1,4 +1,4 @@
-#PanelJamDataExtractor
+# PanelJamDataExtractor
 
 ## Table of Contents
 * [General info](#general-info)
