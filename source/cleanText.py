@@ -4,17 +4,21 @@ Created on Thu Mar 26 10:45:22 2020
 
 @author: utente
 """
+def deEmojify(inputString):
 
-def cleanAuthorsNames():
+    return inputString.encode('ascii', 'ignore').decode('ascii')    
+
+def cleanAuthors(file,col):
+    
     import cleantext as cl
     import openpyxl as xl
     
-    wb = xl.load_workbook("C:\\Users\\utente\\Desktop\\PanelJam\\PanelJamDataExtractor\\TabellaAutoriPanelJam.xlsx")
+    wb = xl.load_workbook("C:\\Users\\utente\\Desktop\\PanelJam\\PanelJamDataExtractor\\" + file + ".xlsx")
     ws = wb.active
     #names = []
     for row in ws.rows:
-    
-        row[0].value = cl.clean(row[0].value,no_line_breaks = True,
+        row[col].value = deEmojify(row[col].value)
+        row[col].value = cl.clean(row[col].value,no_line_breaks = True,
                      no_urls = True,
                      replace_with_url ="<URL>",
                      no_digits = True,
@@ -22,16 +26,18 @@ def cleanAuthorsNames():
                      no_punct = True,
                      no_numbers = True,
                      replace_with_number = "")
-        if '0' in row[0].value:
-            row[0].value = (row[0].value).replace('0','')
-        
-    wb.save("C:\\Users\\utente\\Desktop\\PanelJam\\PanelJamDataExtractor\\TabellaAutoriPanelJam.xlsx")
+        if '0' in row[col].value:
+            row[col].value = (row[col].value).replace('0','')
     
-def cleanProjectsNames():
+    print("cleanAuthors exeuted:")    
+    value = input('Please insert file name: ')    
+    wb.save("C:\\Users\\utente\\Desktop\\PanelJam\\PanelJamDataExtractor\\" + value + ".xlsx")
+
+def cleanProjects(file):
     import cleantext as cl
     import openpyxl as xl
     
-    wb = xl.load_workbook("C:\\Users\\utente\\Desktop\\PanelJam\\PanelJamDataExtractor\\TabellaProgettiPanelJam.xlsx")
+    wb = xl.load_workbook("C:\\Users\\utente\\Desktop\\PanelJam\\PanelJamDataExtractor\\" + file + ".xlsx")
     ws = wb.active
     
     for row in ws.rows:
@@ -48,8 +54,9 @@ def cleanProjectsNames():
         val = row[6].value
         row[6].value = timeChanger(val)
             
-    
-    wb.save("C:\\Users\\utente\\Desktop\\PanelJam\\PanelJamDataExtractor\\TabellaProgettiPanelJam.xlsx")            
+    print("cleanProjects exeuted:\n")    
+    value = input('Please insert file name: ')
+    wb.save("C:\\Users\\utente\\Desktop\\PanelJam\\PanelJamDataExtractor\\" + value + ".xlsx")            
             
             
 def timeChanger(val):
@@ -67,15 +74,16 @@ def timeChanger(val):
             '9 months ago': '270 days ago',
             '10 months ago': '300 days ago',
             '11 months ago': '330 days ago',
+            '12 months ago': '365 days ago',
             'almost 1 year ago': '350 days ago',
             'almost 2 years ago': '710 days ago',
             'almost 3 years ago': '1060 days ago',
             'almost 4 years ago': '1430 days ago',
-            'about 1 year ago': '530 days ago',
-            'about 2 years ago': '880 days ago',
-            'about 4 years ago': '530 days ago',
-            'over 1 year ago' : '450 days ago',
-            'over 2 years ago': '800 days ago'
+            'about 1 year ago': '450 days ago',
+            'about 2 years ago': '800 days ago',
+            'about 4 years ago': '1550 days ago',
+            'over 1 year ago' : '530 days ago',
+            'over 2 years ago': '880 days ago'
                 }
     if val in switcher:
         return switcher.get(val)

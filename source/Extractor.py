@@ -17,13 +17,17 @@ def featuresExtractor():
     print('Start date: '+ str(today) + ' ' + printTime)
     
     #Estrazione features degli autori
-    authors_list = findAuthors()
+    #authors_list = findAuthors()
+    totProjects = findProjects()
+    """
+    shared = shared_projects(authors_list)
     (authors_loves, authors_views, totProjects) = lovesAndViews(authors_list)
     stars_list = star_count(authors_list)
     avatars = has_avatar(authors_list)
     bios = has_bio(authors_list)
     nFollowers = followers(authors_list)
-    createAuthorsTable(authors_list,stars_list,avatars,bios,nFollowers,authors_loves,authors_views)
+    createAuthorsTable(authors_list,stars_list,avatars,bios,nFollowers,authors_loves,authors_views,shared)
+    """
     
     #Estrazione features dei progetti    
     (remixed_list, project_depth_list, time_list, comments_list, likes_list, views_list) = project_stats(totProjects)
@@ -49,7 +53,7 @@ def createProjectsTable(totProjects,remixed_list,likes_list,views_list,comments_
     df = pd.DataFrame(data, columns = ['Project','Remixed','Likes','Views','Comments','Project depth','Time'])
     df.to_excel('TabellaProgettiPanelJam.xlsx', index = False)    
     
-def createAuthorsTable(authors_list,stars_list,avatars,bios,nFollowers,authors_loves,authors_views):
+def createAuthorsTable(authors_list,stars_list,avatars,bios,nFollowers,authors_loves,authors_views,shared):
     import pandas as pd
     
     data = {'Authors': authors_list,
@@ -58,25 +62,25 @@ def createAuthorsTable(authors_list,stars_list,avatars,bios,nFollowers,authors_l
             'Has Bio': bios,
             'Followers': nFollowers,
             'Tot loves': authors_loves,
-            'Tot views': authors_views}
-    df = pd.DataFrame(data, columns = ['Authors','Stars','Has Avatar','Has Bio','Followers','Tot loves','Tot views'])
+            'Tot views': authors_views,
+            'Shared projects':shared}
+    df = pd.DataFrame(data, columns = ['Authors','Stars','Has Avatar','Has Bio','Followers','Tot loves','Tot views','Shared projects'])
     df.to_excel('TabellaAutoriPanelJam.xlsx', index = False)
         
-#file html di un utente casuale della community
 def star_count(authors_list):
     stars_list = []
     print('star_count function started')
     i = 0
     while i < len(authors_list):
         try:
-            url ="https://www.paneljam.com"+authors_list[i]
+            url ="https://www.paneljam.com/"+authors_list[i]
             page1 = rq.get(url)
             soup = BeautifulSoup(page1.content, 'html.parser')
             
             #Ricerca per tag e class per estrapolare la feature star_count
             stars = soup.find('div', class_='star-count').get_text()
             stars_list.append(stars)
-            print(stars,end='\r')
+            print(stars)
             i = i + 1
         except rq.ConnectionError:
             time.sleep(60)
@@ -117,7 +121,7 @@ def has_bio(authors_list):
     i = 0
     while i < len(authors_list):
         try:
-            url = "https://www.paneljam.com"+authors_list[i]
+            url = "https://www.paneljam.com/"+authors_list[i]
             page = rq.get(url)
             soup = BeautifulSoup(page.content, 'html.parser')
             profile = soup.find('p', class_ = 'txt-center')
@@ -260,21 +264,116 @@ def findAuthors():
     authors_list = list(dict.fromkeys(authors_list))            
     return authors_list 
 
+def shared_projects(authors_list):
+    i = 0
+    shared = []
+    while i < len(authors_list):
+        
+        print('Projects of ' + authors_list[i])
+        url = "https://www.paneljam.com/" + authors_list[i] + "/?page=1"
+        page = rq.get(url)
+        soup = BeautifulSoup(page.content,'html.parser')
+        projects = soup.find('div', class_="profile__menu")
+        author = projects.find('a')
+        span = author.find('span')
+        print(span.text)
+        shared.append(span.text)
+        i = i + 1
+    return shared
+
+def shared_projects2():
+    import pandas as pd
+    df = pd.read_excel('C:\\Users\\utente\\Desktop\\PanelJam\\TabellaAutoriPanelJam.xlsx')
+    df2 = pd.read_excel('C:\\Users\\utente\\Desktop\\PanelJam\\PanelJamDataExtractor\\TabellaAutoriPanelJam.xlsx')
+    authors_list = df['Autori']
+
+    i = 0
+    shared = []
+    while i < len(authors_list):
+        
+        print('Projects of ' + authors_list[i])
+        url = "https://www.paneljam.com" + authors_list[i] + "?page=1"
+        page = rq.get(url)
+        soup = BeautifulSoup(page.content,'html.parser')
+        projects = soup.find('div', class_="profile__menu")
+        if projects is None:
+            print(0)
+            shared.append('0')
+            i = i + 1
+        else:
+            author = projects.find('a',href = authors_list[i])
+            span = author.find('span')
+            print(span.text)
+            shared.append(span.text)
+            i = i + 1
+        
+    df2['Shared projects'] = shared
+    df2.to_excel('TabellaAutoriPanelJam.xlsx')
+    
+def findProjects():
+    import re
+    
+    totProjects = []
+    url ="https://www.paneljam.com/jams/"
+    page = rq.get(url)
+    soup = BeautifulSoup(page.content,'html.parser')
+    wrap_group = soup.find('div', class_ = "wrap group wrap--with-sidebar")
+    pagination = wrap_group.find('span', class_ = 'last')
+    last = pagination.find('a')
+    pages = last['href']
+    pages = int(re.search(r'\d+', pages).group())
+    i = 1
+    while i <= pages:
+        print(str(i)+" of "+str(pages)+" pages.")
+        url = "https://www.paneljam.com/jams/?page="+str(i)
+        page = rq.get(url)
+        soup = BeautifulSoup(page.content,'html.parser')
+        strip_grid = soup.find('div', class_ = "strip-grid")
+        jams = strip_grid.findAll('div',class_ = 'jams-wrap')
+        
+        for jam in jams:
+            a = jam.findAll('a',class_ = 'strip-preview-click')
+            for ref in a:
+                if bool(re.search(r'\d', a['href'])) is True:
+                    project = ref['href']
+                    project = int(re.search(r'\d+', ref['href']).group())
+                    totProjects.append(project)
+    
+        i = i + 1
+    print(totProjects)
+    print(len(totProjects))
+    return totProjects
+    """
+    url = "https://www.paneljam.com/jams/?page=2"
+    page = rq.get(url)
+    soup = BeautifulSoup(page.content,'html.parser')
+    strip_grid = soup.find('div', class_ = "strip-grid")
+    jams = strip_grid.findAll('div',class_ = "jams-wrap")
+    for jam in jams    :
+        nOfa = jam.findAll('a',class_ = "strip-preview-click")
+        for a in nOfa:
+            if bool(re.search(r'\d', a['href'])) is True:
+                print(a['href'])
+    """
+
 #Estrazione dell'ultima pagina dei progetti svolti da un utente
-def lovesAndViews(authors_list):
+    
+def lovesAndViews(authors_list,shared):
     
     import re
     authors_loves = []
     authors_views = []
     totProjects = []
     i = 0
+
     while i < len(authors_list):
+        pageCount = 0
         try:
         
             print('Projects of ' + authors_list[i])
             loves = []
             views = []
-            url = "https://www.paneljam.com"+authors_list[i]+"?page=1"
+            url = "https://www.paneljam.com/"+authors_list[i]+"/?page=1"
             page = rq.get(url)
             soup = BeautifulSoup(page.content,'html.parser')
             pages = soup.find('div', class_ = "txt-center wrap load-more-wrapper")
@@ -293,7 +392,7 @@ def lovesAndViews(authors_list):
             a = 1
             while a <= last:
                 try:
-                    url = "https://www.paneljam.com"+authors_list[i]+"?page="+str(a)
+                    url = "https://www.paneljam.com/"+authors_list[i]+"/?page="+str(a)
                     page1 = rq.get(url)
                     soup = BeautifulSoup(page1.content,'html.parser')
                     projects = soup.find('div', class_ = 'profile__content txt-center')
@@ -308,8 +407,10 @@ def lovesAndViews(authors_list):
                         
                         while counter < len(project_list):
                             try:
-                                print((project_list[counter])['href'])
-                                totProjects.append((project_list[counter])['href'])
+                                #print((project_list[counter])['href'])
+                                print(str(pageCount) + " of " + str(shared[i]) + "  " + (project_list[counter])['href'])
+                                pageCount = pageCount+1
+                                
                                 url = "https://www.paneljam.com"+(project_list[counter])['href']
                                 page2 = rq.get(url)
                                 soup = BeautifulSoup(page2.content,'html.parser')
@@ -344,8 +445,6 @@ def lovesAndViews(authors_list):
             
         except rq.ConnectionError:
             time.sleep(60)
-            
-    totProjects = list(dict.fromkeys(totProjects))     
     
-    return authors_loves,authors_views,totProjects
+    return authors_loves,authors_views
   
