@@ -11,9 +11,10 @@ A set of Python script to scrape data from PanelJam.com
 ## Technologies
 Project is created with:
 * Python version: 3.7
-* Anaconda version: 5.3.0
-* Anaconda-client version: 1.7.2
-* Spyder version: 3.3.1
+* Modin version: 0.7.3
+* cleantext version: 1.1.3
+* rpy2 version: 3.3.2
+* openpyxl version: 3.0.3
 
 ## Setup
 To run this project, install it locally using pip:
