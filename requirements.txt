@@ -38,5 +38,6 @@ tqdm==4.46.0
 tzlocal==2.1
 urllib3==1.25.9
 wcwidth==0.1.9
+xlrd==1.2.0
 zipp==3.1.0
 zope.interface==5.1.0
