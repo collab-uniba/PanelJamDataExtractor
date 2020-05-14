@@ -1,5 +1,8 @@
 # PanelJamDataExtractor
-
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/collab-uniba/PanelJamDataExtractor.git/master)
+.. image:: https://mybinder.org/badge_logo.svg
+ :target: https://mybinder.org/v2/gh/collab-uniba/PanelJamDataExtractor.git/master
+ 
 ## Table of Contents
 * [General info](#general-info)
 * [Technologies](#technologies)
