@@ -1,0 +1,5 @@
+install.packages('pscl')
+install.packages('MASS')
+install.packages('stats')
+install.packages('lmtest')
+install.packages('nonnest2')
