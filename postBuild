@@ -1,1 +1,2 @@
-wget -q -O TabellaCompleta.xlsx "https://github.com/collab-uniba/PanelJamDataExtractor/blob/master/data/TabellaCompleta.xlsx"
+#!/bin/bash
+pip install dstack
