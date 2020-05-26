@@ -24,7 +24,6 @@ To run this project, install it locally using pip:
 $ pip setup.py install
 ```
 
-## Inspiration
-This project is inspired by the article "Investigating Crowd Creativity in Online Music Communities"
-by Professor Fabio Calefato(University of Bari, Italy), Professor Filippo Lanubile(University of Bari, Italy),
-Giuseppe Iaffaldano(University of Bari, Italy), Federico Maiorano(University of Bari, Italy)
+## Related work
+This project is based upon previous work: 
+F. Calefato, G. Iaffaldano, F. Lanubile, F. Maiorano (2018) “Investigating Crowd Creativity in Online Music Communities.” In Proc. of 21st ACM Conference on Computer-Supported Cooperative Work and Social Computing (CSCW’18), Nov. 3-7, Jersey City, NY, USA, DOI: [10.1145/327429](https://doi.org/10.1145/3274296)
