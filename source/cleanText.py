@@ -13,7 +13,7 @@ def cleanAuthors(col):
     import cleantext as cl
     import openpyxl as xl
     
-    wb = xl.load_workbook("C:\\Users\\utente\\Desktop\\PanelJam\\PanelJamDataExtractor\\data\\TabellaCompleta.xlsx")
+    wb = xl.load_workbook("..\\data\\TabellaCompleta.xlsx")
     ws = wb.active
     count = 0
     for row in ws.rows:
@@ -31,7 +31,7 @@ def cleanAuthors(col):
                 row[col].value = (row[col].value).replace('0','')
         count = count + 1
     print("cleanAuthors exeuted:")    
-    wb.save("C:\\Users\\utente\\Desktop\\PanelJam\\PanelJamDataExtractor\\data\\TabellaCompleta.xlsx")
+    wb.save("..\\data\\TabellaCompleta.xlsx")
 
 def cleanProjects(file):
     import cleantext as cl
