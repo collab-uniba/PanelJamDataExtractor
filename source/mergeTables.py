@@ -39,12 +39,12 @@ def panelsAuthors(idProjects):
     #import pandas as pd
     
     projects_depth = []
-    firstPanelauthors = []
+    #firstPanelauthors = []
     authorsNames = []
     removes = []
     count = 0 #X
 
-    print('idProject before:' + str(len(idProjects)))
+    print('number of projects:' + str(len(idProjects)))
     
     while count < len(idProjects):
         
@@ -62,17 +62,23 @@ def panelsAuthors(idProjects):
         
             count2 = 0
                 
+            panels = 0
+            for panel in panelsWrap:
+                error = panel.find('div', class_ = 'nsfw-panel')
+                if error is None:
+                    panels = panels + 1
+                else:
+                    removes.append(count)
+                    panels = 0
+                    panelsWrap = str(panelsWrap)
+                    panelsWrap = ''
+                    break
+            
             while count2 < len(panelsWrap):
                 img = panelsWrap[count2].find('img')
                 if img is not None:
                     author = img['alt']
-                    """
-                    byOcc = author.count('by')
-                    if byOcc > 1:
-                        author = author.replace("by","",byOcc - 1)
-                    pos = author.find('by')
-                    name = author[pos+3:]
-                    """
+                    
                     pos = author.find('Online Drawing Game Comic Strip Panel by')
                     rep = author[pos:]
                     name = rep.replace('Online Drawing Game Comic Strip Panel by ','')
@@ -85,27 +91,30 @@ def panelsAuthors(idProjects):
             
             
             #Estrazione numero di panels
-    
+            """
             panels = 0
             for panel in panelsWrap:
                 error = panel.find('div', class_ = 'nsfw-panel')
                 if error is None:
                     panels = panels + 1
-            
+                else:
+                    removes.append(count)
+                    panels = 0
+            """
             #Estrazione autore primo panel
             if panels > 0:
                 primo = authors[0]
                 authorsNames.append(primo)
                 projects_depth.append(panels)
-                firstPanelauthors.append(primo)
+                #firstPanelauthors.append(primo)
                 i = 1
                 #Estrazione autori panel rimanenti
                 while i < panels:
-                    firstPanelauthors.append(primo)
+                    #firstPanelauthors.append(primo)
                     authorsNames.append(authors[i])
                     i = i + 1  
-            else:
-                removes.append(count)
+            #else:
+                #removes.append(count)
                 
             count = count + 1
         else:
@@ -118,30 +127,30 @@ def panelsAuthors(idProjects):
             del idProjects[elem - i]
             i = i + 1
             
-    return firstPanelauthors,authorsNames,projects_depth,idProjects, removes
- 
+    #return firstPanelauthors,authorsNames,projects_depth,idProjects, removes
+    return authorsNames,projects_depth,idProjects, removes 
 
-#FUNZIONE CHE CREA LA PRIMA TABELLA CONTENENTE I PROGETTI E GLI AUTORI DEI PRIMI PANEL E DI TUTTI GLI ALTRI PANEL    
-def createFirstTable():
+#FUNZIONE CHE CREA LA PRIMA TABELLA CONTENENTE I PROGETTI E GLI AUTORI DEI PANELS    
+def createTable():
     import modin.pandas as pd
     import time
     from datetime import date,datetime
+    import selfOverdub as Self
+    import cleanText as clean
+    import panelStarsExtractor as extr
+    import gc
     
-    df = pd.read_excel('C:\\Users\\utente\\Desktop\\PanelJam\\PanelJamDataExtractor\\TabellaProgettiPanelJam.xlsx')
+    df = pd.read_excel('C:\\Users\\utente\\Desktop\\PanelJam\\PanelJamDataExtractor\\data\\TabellaProgettiPanelJam.xlsx')
     
     idProjects = (df['project']).tolist()
-    #likes = df['Likes']
-    #views = df['Views']
-    #comments = df['Comments']
     timeProg= (df['Time']).tolist()
-    #remixed = df['Remixed']
     
     today = date.today()
     start_time = time.time()
     printTime = time.strftime("%H:%M:%S", time.gmtime(start_time))
     print('Start date: '+ str(today) + ' ' + printTime)
     
-    (firstPanelauthors,finalAuthorsNames,projects_depth,idProjects,removes) = panelsAuthors(idProjects)
+    (finalAuthorsNames,projects_depth,idProjects,removes) = panelsAuthors(idProjects)
     
     i = 0
     for elem in removes:
@@ -150,9 +159,15 @@ def createFirstTable():
 
     (panelsId,finalProjectsId,final_projects_depth,mergedRemixed) = searchPanelsId(idProjects, projects_depth)
     
-    createMergedTable(firstPanelauthors, finalAuthorsNames, final_projects_depth, panelsId, finalProjectsId, mergedRemixed, idProjects, timeProg)
-    
+    Table = createMergedTable( finalAuthorsNames, final_projects_depth, panelsId, finalProjectsId, mergedRemixed, idProjects, timeProg)
+    gc.collect()
+    Table = Self.removeSelfOverdub(Table)
+    #Table = extr.panelsStar(Table)
+    Table.to_excel('C:\\Users\\utente\\Desktop\\PanelJam\\PanelJamDataExtractor\\data\\TabellaCompletaProva.xlsx',index = False)
+    print("number of projects removed = " + str(len(removes)))
+    print(removes)
     today = date.today()
+    
     printTime = time.strftime("%H:%M:%S", time.gmtime(time.time()))
     print('End date: '+ str(today) + ' ' + printTime)    
     elapsed_time = time.time() - start_time
@@ -180,7 +195,7 @@ def mergeTime(idProjects,mergedTable,time):
 
     return mergedTable
     
-def mergeAuthors(finalAuthorsNames,firstPanelauthors):
+def mergeAuthors(finalAuthorsNames):
 
     import Extractor as ex
     #--------------------CREAZIONE TABELLA UTENTI PANEL ATTUALI------------------------------------------------
@@ -202,31 +217,16 @@ def mergeAuthors(finalAuthorsNames,firstPanelauthors):
     authors_ranking = calculateAuthorRanking(stars_list,authors_loves,authors_views,nFollowers,shared)
     
     authorsTable = createAuthorsTable(noDuplicates,stars_list,avatars,bios,nFollowers,authors_loves,authors_views,authors_ranking,finalAuthorsNames)
-    authorsTable = authorsTable.rename(columns = {'Authors':'autore_panel_attuale',
-                                                  'Stars':'stars_attuale',
-                                                  'Has Avatar':'has_avatar_attuale',
-                                                  'Has Bio':'has_bio_attuale',
-                                                  'Followers':'followers_attuale',
-                                                  'Tot loves':'tot_loves_attuale',
-                                                  'Tot views':'tot_views_attuale'})
-
-    #-----------------CREAZIONE TABELLA UTENTI DEI PRIMI PANEL--------------------------------------------------------------
-    
-    noDuplicates = list(dict.fromkeys(firstPanelauthors))
-    firstPanelAuthorsTable = createFirstPanelAuthors(authorsTable, noDuplicates)
-    firstPanelAuthorsTable = firstPanelAuthorsTable.rename(columns = {'autore_panel_attuale':'autore_panel_1°',
-                                                                      'stars_attuale':'stars_1°',
-                                                                      'has_avatar_attuale':'has_avatar_1°',
-                                                                      'has_bio_attuale':'has_bio_1°',
-                                                                      'followers_attuale':'followers_1°',
-                                                                      'tot_loves_attuale':'tot_loves_1°',
-                                                                      'tot_views_attuale':'tot_views_1°',
-                                                                      'ranking_attuale':'ranking_1°'})
+    authorsTable = authorsTable.rename(columns = {'Authors':'autore_panel',
+                                                  'Stars':'stars_autore',
+                                                  'Has Avatar':'has_avatar_autore',
+                                                  'Has Bio':'has_bio_autore',
+                                                  'Followers':'followers_autore',
+                                                  'Tot loves':'tot_loves_autore',
+                                                  'Tot views':'tot_views_autore'})
     
    
-    #authorsTable.to_excel('authorsTable.xlsx', index = False)
-    #firstPanelAuthorsTable.to_excel('firstPanelAuthorsTable.xlsx', index = False)
-    return authorsTable, firstPanelAuthorsTable
+    return authorsTable
 
 def calculateAuthorRanking(stars_list,authors_loves,authors_views,nFollowers,shared):
     import modin.pandas as pd
@@ -268,58 +268,51 @@ def createAuthorsTable(noDuplicates,stars_list,avatars,bios,nFollowers,authors_l
             'Followers': nFollowers,
             'Tot loves': authors_loves,
             'Tot views': authors_views,
-            'ranking_attuale':authors_ranking}
+            'ranking_autore':authors_ranking}
     dataAuthors = {'Authors':finalAuthorsName}
     
     dfAuthors = pd.DataFrame(dataAuthors, columns = ['Authors'])
-    df = pd.DataFrame(data, columns = ['Authors','Stars','Has Avatar','Has Bio','Followers','Tot loves','Tot views','ranking_attuale'])
+    df = pd.DataFrame(data, columns = ['Authors','Stars','Has Avatar','Has Bio','Followers','Tot loves','Tot views','ranking_autore'])
     mergedAuthors = pd.merge(dfAuthors,df, on = 'Authors')
     
     return mergedAuthors  
     
-def createMergedTable(firstPanelauthors, finalAuthorsNames, final_projects_depth, panelsId, finalProjectsId,mergedRemix, idProjects, time):
+def createMergedTable( finalAuthorsNames, final_projects_depth, panelsId, finalProjectsId,mergedRemix, idProjects, time):
     import modin.pandas as pd
     import gc
     print('createMergedTable')
     data = {'id_prog': finalProjectsId,
             'id_panel': panelsId,
             'project_depth': final_projects_depth,
-            'remixed': mergedRemix,
-            'autore_panel_1°': firstPanelauthors,
-            'autore_panel_attuale':finalAuthorsNames}
-    mergedTable = pd.DataFrame(data, columns = ['id_prog','id_panel','project_depth','remixed','autore_panel_1°','autore_panel_attuale'])    
+            'extended': mergedRemix,
+            'autore_panel':finalAuthorsNames}
+    mergedTable = pd.DataFrame(data, columns = ['id_prog','id_panel','project_depth','extended','autore_panel'])    
     mergedTable = mergeTime(idProjects,mergedTable,time)
-    #mergedTable.to_excel('mergedTable.xlsx', index = False)
-    authorsTable,firstPanelAuthorsTable = mergeAuthors(finalAuthorsNames,firstPanelauthors)
+    
+    authorsTable = mergeAuthors(finalAuthorsNames)
     memory = gc.collect()
     print(memory)
     tableWithAuthorsPanels = createTableWithAuthorsPanels(authorsTable, mergedTable)
-    createFinalTable(tableWithAuthorsPanels,firstPanelAuthorsTable)
-    
+    #tableWithAuthorsPanels.to_excel('C:\\Users\\utente\\Desktop\\PanelJam\\PanelJamDataExtractor\\data\\PanelJamTable2.xlsx', index = False)
+    Table = mergePanelsFeature(tableWithAuthorsPanels)
+    return Table
     
 def createTableWithAuthorsPanels(authorsTable,mergedTable):
     import modin.pandas as pd
     
-    tableWithAuthorsPanels = pd.merge(mergedTable,authorsTable, on = 'autore_panel_attuale')
+    tableWithAuthorsPanels = pd.merge(mergedTable,authorsTable, on = 'autore_panel')
     tableWithAuthorsPanels = tableWithAuthorsPanels.drop_duplicates(subset = "id_panel")
     return tableWithAuthorsPanels    
 
-def createFinalTable(tableWithAuthorsPanels,firstPanelAuthorsTable):   
+
+def mergePanelsFeature(tableWithAuthorsPanels):
     import modin.pandas as pd
     
-    finalTable = pd.merge(tableWithAuthorsPanels,firstPanelAuthorsTable, on = 'autore_panel_1°')
-    
-    finalTable = finalTable.drop_duplicates(subset = "id_panel")
-    finalTable.to_excel('C:\\Users\\utente\\Desktop\\PanelJam\\PanelJamDataExtractor\\PanelJamTable.xlsx', index = False)
-
-
-def mergePanelsFeature():
-    import modin.pandas as pd
-    
-    projectTable = pd.read_excel("C:\\Users\\utente\\Desktop\\PanelJam\\PanelJamDataExtractor\\TabellaProgettiPanelJam.xlsx")    
-    PanelJamTable = pd.read_excel("C:\\Users\\utente\\Desktop\\PanelJam\\PanelJamDataExtractor\\PanelJamTable.xlsx")    
+    projectTable = pd.read_excel("C:\\Users\\utente\\Desktop\\PanelJam\\PanelJamDataExtractor\\data\\TabellaProgettiPanelJam.xlsx")    
+    #PanelJamTable = pd.read_excel("C:\\Users\\utente\\Desktop\\PanelJam\\PanelJamDataExtractor\\data\\PanelJamTable2.xlsx")    
         
-    Table = pd.merge(PanelJamTable,projectTable, left_on = 'id_prog', right_on = 'project')
+    Table = pd.merge(tableWithAuthorsPanels,projectTable, left_on = 'id_prog', right_on = 'project')
     Table = Table.drop(columns = ['project','Remixed','Time','Project depth'])
     
-    Table.to_excel("C:\\Users\\utente\\Desktop\\PanelJam\\PanelJamDataExtractor\\TabellaCompleta.xlsx",index = False)
+    #Table.to_excel("C:\\Users\\utente\\Desktop\\PanelJam\\PanelJamDataExtractor\\data\\TabellaCompleta.xlsx",index = False)
+    return Table

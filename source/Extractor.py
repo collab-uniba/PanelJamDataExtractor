@@ -148,10 +148,14 @@ def followers(authors_list):
             page = rq.get(url)
             soup = BeautifulSoup(page.content, 'html.parser')
             profile_menu = soup.find('div', class_ = 'profile__menu')
-            friends_list = profile_menu.find('a',href=re.compile('/friends'))
-            print(authors_list[i]+' friends: ' + friends_list.get_text())
-            friends = friends_list.get_text()
-            nFollowers.append(friends)
+            if profile_menu is not None:
+                friends_list = profile_menu.find('a',href=re.compile('/friends'))
+                print(authors_list[i]+' friends: ' + friends_list.get_text())
+                friends = friends_list.get_text()
+                nFollowers.append(friends)
+            else:
+                print(authors_list[i]+' friends: ' + '0')
+                nFollowers.append('0')
             i = i + 1
         except rq.ConnectionError:
             time.sleep(60)
@@ -343,18 +347,7 @@ def findProjects():
     print(totProjects)
     print(len(totProjects))
     return totProjects
-    """
-    url = "https://www.paneljam.com/jams/?page=2"
-    page = rq.get(url)
-    soup = BeautifulSoup(page.content,'html.parser')
-    strip_grid = soup.find('div', class_ = "strip-grid")
-    jams = strip_grid.findAll('div',class_ = "jams-wrap")
-    for jam in jams    :
-        nOfa = jam.findAll('a',class_ = "strip-preview-click")
-        for a in nOfa:
-            if bool(re.search(r'\d', a['href'])) is True:
-                print(a['href'])
-    """
+
 
 #Estrazione dell'ultima pagina dei progetti svolti da un utente
     
