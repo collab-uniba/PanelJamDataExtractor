@@ -1,5 +1,9 @@
 # PanelJamDataExtractor
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/collab-uniba/PanelJamDataExtractor.git/master)
+Binder link to count data model notebook
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/collab-uniba/PanelJamDataExtractor.git/master?filepath=notebook%2FcountDataModel.ipynb)
+
+Binder link to regression model notebook
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/collab-uniba/PanelJamDataExtractor.git/master?filepath=notebook%2FregressionModel.ipynb)
  
 ## Table of Contents
 * [General info](#general-info)
