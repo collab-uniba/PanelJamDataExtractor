@@ -8,36 +8,36 @@ def deEmojify(inputString):
 
     return inputString.encode('ascii', 'ignore').decode('ascii')    
 
-def cleanAuthors(file,col):
+def cleanAuthors(col):
     
     import cleantext as cl
     import openpyxl as xl
     
-    wb = xl.load_workbook("C:\\Users\\utente\\Desktop\\PanelJam\\PanelJamDataExtractor\\" + file + ".xlsx")
+    wb = xl.load_workbook("C:\\Users\\utente\\Desktop\\PanelJam\\PanelJamDataExtractor\\data\\TabellaCompleta.xlsx")
     ws = wb.active
-    #names = []
+    count = 0
     for row in ws.rows:
-        row[col].value = deEmojify(row[col].value)
-        row[col].value = cl.clean(row[col].value,no_line_breaks = True,
-                     no_urls = True,
-                     replace_with_url ="<URL>",
-                     no_digits = True,
-                     no_currency_symbols = True,
-                     no_punct = True,
-                     no_numbers = True,
-                     replace_with_number = "")
-        if '0' in row[col].value:
-            row[col].value = (row[col].value).replace('0','')
-    
+        if count >= 1:
+            row[col].value = deEmojify(row[col].value)
+            row[col].value = cl.clean(row[col].value,no_line_breaks = True,
+                         no_urls = True,
+                         replace_with_url ="<URL>",
+                         no_digits = True,
+                         no_currency_symbols = True,
+                         no_punct = True,
+                         no_numbers = True,
+                         replace_with_number = "")
+            if '0' in row[col].value:
+                row[col].value = (row[col].value).replace('0','')
+        count = count + 1
     print("cleanAuthors exeuted:")    
-    value = input('Please insert file name: ')    
-    wb.save("C:\\Users\\utente\\Desktop\\PanelJam\\PanelJamDataExtractor\\" + value + ".xlsx")
+    wb.save("C:\\Users\\utente\\Desktop\\PanelJam\\PanelJamDataExtractor\\data\\TabellaCompleta.xlsx")
 
 def cleanProjects(file):
     import cleantext as cl
     import openpyxl as xl
     
-    wb = xl.load_workbook("C:\\Users\\utente\\Desktop\\PanelJam\\PanelJamDataExtractor\\" + file + ".xlsx")
+    wb = xl.load_workbook("C:\\Users\\utente\\Desktop\\PanelJam\\PanelJamDataExtractor\\data\\" + file + ".xlsx")
     ws = wb.active
     
     for row in ws.rows:
@@ -56,7 +56,7 @@ def cleanProjects(file):
             
     print("cleanProjects exeuted:\n")    
     value = input('Please insert file name: ')
-    wb.save("C:\\Users\\utente\\Desktop\\PanelJam\\PanelJamDataExtractor\\" + value + ".xlsx")            
+    wb.save("C:\\Users\\utente\\Desktop\\PanelJam\\PanelJamDataExtractor\\data\\" + value + ".xlsx")            
             
             
 def timeChanger(val):
