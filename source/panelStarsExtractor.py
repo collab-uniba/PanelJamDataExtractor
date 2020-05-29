@@ -31,10 +31,6 @@ def panelsStar():
     
     br.open('https://www.paneljam.com/users/sign_in/')
     
-    
-   # for f in br.forms():
-   #     print(f)
-    
     br.select_form(nr=0)
     
     br.form['user[email]'] = 'checco640@gmail.com'

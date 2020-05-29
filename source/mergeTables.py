@@ -17,10 +17,9 @@ def searchPanelsId(idProjects,projects_depth):
     remixed = []
     
     while i < len(idProjects):
-    #while i < 370:
         count = 0
         while count < projects_depth[i]:
-            #final_projects_depth.append(projects_depth[i])
+
             if count == (projects_depth[i] - 1):
                 remixed.append(False)
             else:
@@ -36,13 +35,12 @@ def searchPanelsId(idProjects,projects_depth):
 
         
 def panelsAuthors(idProjects):
-    #import pandas as pd
     
     projects_depth = []
-    #firstPanelauthors = []
+
     authorsNames = []
     removes = []
-    count = 0 #X
+    count = 0 
 
     print('number of projects:' + str(len(idProjects)))
     
@@ -53,7 +51,7 @@ def panelsAuthors(idProjects):
             url ="https://www.paneljam.com/jams/"+str(idProjects[count])+"/panels/"
             page1 = rq.get(url)
             authors = []
-            #authors2 = []
+
             soup = BeautifulSoup(page1.content, 'html.parser')
             
                 
@@ -88,27 +86,15 @@ def panelsAuthors(idProjects):
                     authors.append(name)
                 count2 = count2 + 1
     
-            
-            
-            #Estrazione numero di panels
-            """
-            panels = 0
-            for panel in panelsWrap:
-                error = panel.find('div', class_ = 'nsfw-panel')
-                if error is None:
-                    panels = panels + 1
-                else:
-                    removes.append(count)
-                    panels = 0
-            """
-            #Estrazione autore primo panel
+
+            #Estrazione autori panel 
             if panels > 0:
                 primo = authors[0]
                 authorsNames.append(primo)
                 projects_depth.append(panels)
-                #firstPanelauthors.append(primo)
+
                 i = 1
-                #Estrazione autori panel rimanenti
+                
                 while i < panels:
                     #firstPanelauthors.append(primo)
                     authorsNames.append(authors[i])
@@ -127,7 +113,6 @@ def panelsAuthors(idProjects):
             del idProjects[elem - i]
             i = i + 1
             
-    #return firstPanelauthors,authorsNames,projects_depth,idProjects, removes
     return authorsNames,projects_depth,idProjects, removes 
 
 #FUNZIONE CHE CREA LA PRIMA TABELLA CONTENENTE I PROGETTI E GLI AUTORI DEI PANELS    
@@ -140,7 +125,7 @@ def createTable():
     import panelStarsExtractor as extr
     import gc
     
-    df = pd.read_excel('C:\\Users\\utente\\Desktop\\PanelJam\\PanelJamDataExtractor\\data\\TabellaProgettiPanelJam.xlsx')
+    df = pd.read_excel('..\\data\\TabellaProgettiPanelJam.xlsx')
     
     idProjects = (df['project']).tolist()
     timeProg= (df['Time']).tolist()
@@ -163,7 +148,7 @@ def createTable():
     gc.collect()
     Table = Self.removeSelfOverdub(Table)
     #Table = extr.panelsStar(Table)
-    Table.to_excel('C:\\Users\\utente\\Desktop\\PanelJam\\PanelJamDataExtractor\\data\\TabellaCompletaProva.xlsx',index = False)
+    Table.to_excel('..\\data\\TabellaCompletaProva.xlsx',index = False)
     print("number of projects removed = " + str(len(removes)))
     print(removes)
     today = date.today()
@@ -293,7 +278,6 @@ def createMergedTable( finalAuthorsNames, final_projects_depth, panelsId, finalP
     memory = gc.collect()
     print(memory)
     tableWithAuthorsPanels = createTableWithAuthorsPanels(authorsTable, mergedTable)
-    #tableWithAuthorsPanels.to_excel('C:\\Users\\utente\\Desktop\\PanelJam\\PanelJamDataExtractor\\data\\PanelJamTable2.xlsx', index = False)
     Table = mergePanelsFeature(tableWithAuthorsPanels)
     return Table
     
@@ -308,11 +292,9 @@ def createTableWithAuthorsPanels(authorsTable,mergedTable):
 def mergePanelsFeature(tableWithAuthorsPanels):
     import modin.pandas as pd
     
-    projectTable = pd.read_excel("C:\\Users\\utente\\Desktop\\PanelJam\\PanelJamDataExtractor\\data\\TabellaProgettiPanelJam.xlsx")    
-    #PanelJamTable = pd.read_excel("C:\\Users\\utente\\Desktop\\PanelJam\\PanelJamDataExtractor\\data\\PanelJamTable2.xlsx")    
+    projectTable = pd.read_excel("..\\data\\TabellaProgettiPanelJam.xlsx")        
         
     Table = pd.merge(tableWithAuthorsPanels,projectTable, left_on = 'id_prog', right_on = 'project')
     Table = Table.drop(columns = ['project','Remixed','Time','Project depth'])
     
-    #Table.to_excel("C:\\Users\\utente\\Desktop\\PanelJam\\PanelJamDataExtractor\\data\\TabellaCompleta.xlsx",index = False)
     return Table

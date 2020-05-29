@@ -16,19 +16,8 @@ def featuresExtractor():
     printTime = time.strftime("%H:%M:%S", time.gmtime(start_time))
     print('Start date: '+ str(today) + ' ' + printTime)
     
-    #Estrazione features degli autori
-    #authors_list = findAuthors()
-    totProjects = findProjects()
-    """
-    shared = shared_projects(authors_list)
-    (authors_loves, authors_views, totProjects) = lovesAndViews(authors_list)
-    stars_list = star_count(authors_list)
-    avatars = has_avatar(authors_list)
-    bios = has_bio(authors_list)
-    nFollowers = followers(authors_list)
-    createAuthorsTable(authors_list,stars_list,avatars,bios,nFollowers,authors_loves,authors_views,shared)
-    """
     
+    totProjects = findProjects()
     #Estrazione features dei progetti    
     (remixed_list, project_depth_list, time_list, comments_list, likes_list, views_list) = project_stats(totProjects)
     createProjectsTable(totProjects,remixed_list,likes_list,views_list,comments_list,project_depth_list,time_list)
@@ -51,7 +40,7 @@ def createProjectsTable(totProjects,remixed_list,likes_list,views_list,comments_
             'Project depth': project_depth_list,
             'Time': time_list}
     df = pd.DataFrame(data, columns = ['Project','Remixed','Likes','Views','Comments','Project depth','Time'])
-    df.to_excel('TabellaProgettiPanelJam.xlsx', index = False)    
+    df.to_excel('..\\data\\TabellaProgettiPanelJam.xlsx', index = False)    
     
 def createAuthorsTable(authors_list,stars_list,avatars,bios,nFollowers,authors_loves,authors_views,shared):
     import pandas as pd
@@ -285,35 +274,6 @@ def shared_projects(authors_list):
         i = i + 1
     return shared
 
-def shared_projects2():
-    import pandas as pd
-    df = pd.read_excel('C:\\Users\\utente\\Desktop\\PanelJam\\TabellaAutoriPanelJam.xlsx')
-    df2 = pd.read_excel('C:\\Users\\utente\\Desktop\\PanelJam\\PanelJamDataExtractor\\TabellaAutoriPanelJam.xlsx')
-    authors_list = df['Autori']
-
-    i = 0
-    shared = []
-    while i < len(authors_list):
-        
-        print('Projects of ' + authors_list[i])
-        url = "https://www.paneljam.com" + authors_list[i] + "?page=1"
-        page = rq.get(url)
-        soup = BeautifulSoup(page.content,'html.parser')
-        projects = soup.find('div', class_="profile__menu")
-        if projects is None:
-            print(0)
-            shared.append('0')
-            i = i + 1
-        else:
-            author = projects.find('a',href = authors_list[i])
-            span = author.find('span')
-            print(span.text)
-            shared.append(span.text)
-            i = i + 1
-        
-    df2['Shared projects'] = shared
-    df2.to_excel('TabellaAutoriPanelJam.xlsx')
-    
 def findProjects():
     import re
     
