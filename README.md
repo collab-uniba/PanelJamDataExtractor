@@ -9,7 +9,7 @@ Binder link to regression model notebook
 * [General info](#general-info)
 * [Technologies](#technologies)
 * [Setup](#Setup)
-* [Related Work](#Related Work)
+* [Related Work](#Related-Work)
 
 ## General info
 A set of Python script to scrape data from PanelJam.com
