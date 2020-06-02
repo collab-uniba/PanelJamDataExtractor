@@ -8,7 +8,8 @@ Binder link to regression model notebook
 ## Table of Contents
 * [General info](#general-info)
 * [Technologies](#technologies)
-* [Inspiration](#inspiration)
+* [Setup](#Setup)
+* [Related Work](#Related Work)
 
 ## General info
 A set of Python script to scrape data from PanelJam.com
