@@ -37,7 +37,7 @@ def cleanProjects(file):
     import cleantext as cl
     import openpyxl as xl
     
-    wb = xl.load_workbook("C:\\Users\\utente\\Desktop\\PanelJam\\PanelJamDataExtractor\\data\\" + file + ".xlsx")
+    wb = xl.load_workbook("..\\data\\TabellaProgettiPanelJam.xlsx")
     ws = wb.active
     
     for row in ws.rows:
@@ -54,9 +54,8 @@ def cleanProjects(file):
         val = row[6].value
         row[6].value = timeChanger(val)
             
-    print("cleanProjects exeuted:\n")    
-    value = input('Please insert file name: ')
-    wb.save("C:\\Users\\utente\\Desktop\\PanelJam\\PanelJamDataExtractor\\data\\" + value + ".xlsx")            
+    print("cleanProjects executed")    
+    wb.save("..\\data\\TabellaProgettiPanelJam.xlsx")            
             
             
 def timeChanger(val):
