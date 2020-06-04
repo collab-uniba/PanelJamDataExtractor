@@ -202,13 +202,13 @@ def mergeAuthors(finalAuthorsNames):
     authors_ranking = calculateAuthorRanking(stars_list,authors_loves,authors_views,nFollowers,shared)
     
     authorsTable = createAuthorsTable(noDuplicates,stars_list,avatars,bios,nFollowers,authors_loves,authors_views,authors_ranking,finalAuthorsNames)
-    authorsTable = authorsTable.rename(columns = {'Authors':'autore_panel',
-                                                  'Stars':'stars_autore',
-                                                  'Has Avatar':'has_avatar_autore',
-                                                  'Has Bio':'has_bio_autore',
-                                                  'Followers':'followers_autore',
-                                                  'Tot loves':'tot_loves_autore',
-                                                  'Tot views':'tot_views_autore'})
+    authorsTable = authorsTable.rename(columns = {'Authors':'panel_author',
+                                                  'Stars':'author_stars',
+                                                  'Has Avatar':'has_avatar_author',
+                                                  'Has Bio':'has_bio_author',
+                                                  'Followers':'author_followers',
+                                                  'Tot loves':'tot_loves_author',
+                                                  'Tot views':'tot_views_author'})
     
    
     return authorsTable
@@ -230,18 +230,6 @@ def calculateAuthorRanking(stars_list,authors_loves,authors_views,nFollowers,sha
     
     
     return author_ranking
-
-def createFirstPanelAuthors(authorsTable,noDuplicates):
-    import modin.pandas as pd
-    
-
-    dataAuthors = {'Authors':noDuplicates}
-    
-    dfAuthors = pd.DataFrame(dataAuthors, columns = ['Authors'])
-    mergedAuthors = pd.merge(dfAuthors,authorsTable, left_on = 'Authors', right_on = 'autore_panel_attuale')
-    mergedAuthors = mergedAuthors.drop(columns = 'Authors')
-    
-    return mergedAuthors
     
 def createAuthorsTable(noDuplicates,stars_list,avatars,bios,nFollowers,authors_loves,authors_views,authors_ranking,finalAuthorsName):
     import modin.pandas as pd
@@ -253,11 +241,11 @@ def createAuthorsTable(noDuplicates,stars_list,avatars,bios,nFollowers,authors_l
             'Followers': nFollowers,
             'Tot loves': authors_loves,
             'Tot views': authors_views,
-            'ranking_autore':authors_ranking}
+            'author_ranking':authors_ranking}
     dataAuthors = {'Authors':finalAuthorsName}
     
     dfAuthors = pd.DataFrame(dataAuthors, columns = ['Authors'])
-    df = pd.DataFrame(data, columns = ['Authors','Stars','Has Avatar','Has Bio','Followers','Tot loves','Tot views','ranking_autore'])
+    df = pd.DataFrame(data, columns = ['Authors','Stars','Has Avatar','Has Bio','Followers','Tot loves','Tot views','author_ranking'])
     mergedAuthors = pd.merge(dfAuthors,df, on = 'Authors')
     
     return mergedAuthors  
@@ -270,8 +258,8 @@ def createMergedTable( finalAuthorsNames, final_projects_depth, panelsId, finalP
             'id_panel': panelsId,
             'project_depth': final_projects_depth,
             'extended': mergedRemix,
-            'autore_panel':finalAuthorsNames}
-    mergedTable = pd.DataFrame(data, columns = ['id_prog','id_panel','project_depth','extended','autore_panel'])    
+            'panel_author':finalAuthorsNames}
+    mergedTable = pd.DataFrame(data, columns = ['id_prog','id_panel','project_depth','extended','panel_author'])    
     mergedTable = mergeTime(idProjects,mergedTable,time)
     
     authorsTable = mergeAuthors(finalAuthorsNames)
@@ -284,7 +272,7 @@ def createMergedTable( finalAuthorsNames, final_projects_depth, panelsId, finalP
 def createTableWithAuthorsPanels(authorsTable,mergedTable):
     import modin.pandas as pd
     
-    tableWithAuthorsPanels = pd.merge(mergedTable,authorsTable, on = 'autore_panel')
+    tableWithAuthorsPanels = pd.merge(mergedTable,authorsTable, on = 'panel_author')
     tableWithAuthorsPanels = tableWithAuthorsPanels.drop_duplicates(subset = "id_panel")
     return tableWithAuthorsPanels    
 

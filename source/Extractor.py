@@ -274,6 +274,12 @@ def shared_projects(authors_list):
         i = i + 1
     return shared
 
+def created_panels(authors_list):
+    panels = []
+    for author in authors_list:
+        panels.append(authors_list.count(author))
+    return panels
+
 def findProjects():
     import re
     

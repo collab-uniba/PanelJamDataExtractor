@@ -17,7 +17,7 @@ def removeSelfOverdub(df):
         if idProg != id_:
             print(idProg)
             rows = df.loc[df['id_prog'] == idProg]    
-            authors = rows['autore_panel'].tolist()
+            authors = rows['panel_author'].tolist()
             name = ''
             count = 1
             for auth in authors:
@@ -37,7 +37,7 @@ def removeSelfOverdub(df):
     for ids in removeList:
        
        rows = df.loc[df['id_prog'] == ids]
-       rows = rows.drop_duplicates(subset ="autore_panel",keep='first',inplace=False) 
+       rows = rows.drop_duplicates(subset ="panel_author",keep='first',inplace=False) 
        rows['project_depth'] = 1
        rows['remixed'] = False
        df = df[df.id_prog != ids]

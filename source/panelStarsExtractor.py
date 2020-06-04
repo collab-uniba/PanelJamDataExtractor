@@ -33,8 +33,8 @@ def panelsStar():
     
     br.select_form(nr=0)
     
-    br.form['user[email]'] = 'checco640@gmail.com'
-    br.form['user[password]'] = 'Checco98-'
+    br.form['user[email]'] = 'rqrqtvshsjkkunjhmu@awdrt.org'
+    br.form['user[password]'] = 'extractor'
     
     
     br.submit()
