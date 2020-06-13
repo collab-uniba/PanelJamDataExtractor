@@ -52,7 +52,7 @@ def panelsStar():
         homepage = bs(homepage,'html.parser')
         panel_wrap = homepage.find_all('div', class_ = 'panel-wrap')
         rows = table.loc[table['id_prog'] == prog]
-        nRows = max(rows['project_depth'])
+        nRows = max(rows['panel_depth'])
         print(nRows)
         index = 0
         for panel in panel_wrap:
