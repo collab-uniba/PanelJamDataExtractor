@@ -256,10 +256,10 @@ def createMergedTable( finalAuthorsNames, final_projects_depth, panelsId, finalP
     print('createMergedTable')
     data = {'id_prog': finalProjectsId,
             'id_panel': panelsId,
-            'project_depth': final_projects_depth,
+            'panel_depth': final_projects_depth,
             'extended': mergedRemix,
             'panel_author':finalAuthorsNames}
-    mergedTable = pd.DataFrame(data, columns = ['id_prog','id_panel','project_depth','extended','panel_author'])    
+    mergedTable = pd.DataFrame(data, columns = ['id_prog','id_panel','panel_depth','extended','panel_author'])    
     mergedTable = mergeTime(idProjects,mergedTable,time)
     
     authorsTable = mergeAuthors(finalAuthorsNames)

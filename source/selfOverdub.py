@@ -38,7 +38,7 @@ def removeSelfOverdub(df):
        
        rows = df.loc[df['id_prog'] == ids]
        rows = rows.drop_duplicates(subset ="panel_author",keep='first',inplace=False) 
-       rows['project_depth'] = 1
+       rows['panel_depth'] = 1
        rows['remixed'] = False
        df = df[df.id_prog != ids]
        df = df.append(rows, ignore_index = True)

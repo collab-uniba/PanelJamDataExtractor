@@ -11,6 +11,7 @@ from bs4 import BeautifulSoup
 
 def featuresExtractor():
     from datetime import date,datetime
+    import cleanText as clean
     today = date.today()
     start_time = time.time()
     printTime = time.strftime("%H:%M:%S", time.gmtime(start_time))
@@ -21,7 +22,7 @@ def featuresExtractor():
     #Estrazione features dei progetti    
     (remixed_list, project_depth_list, time_list, comments_list, likes_list, views_list) = project_stats(totProjects)
     createProjectsTable(totProjects,remixed_list,likes_list,views_list,comments_list,project_depth_list,time_list)
-    
+    clean.cleanProjects()
     
     today = date.today()
     printTime = time.strftime("%H:%M:%S", time.gmtime(time.time()))

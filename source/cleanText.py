@@ -33,7 +33,7 @@ def cleanAuthors(col):
     print("cleanAuthors exeuted:")    
     wb.save("..\\data\\TabellaCompleta.xlsx")
 
-def cleanProjects(file):
+def cleanProjects():
     import cleantext as cl
     import openpyxl as xl
     
