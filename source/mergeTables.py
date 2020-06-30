@@ -116,7 +116,7 @@ def panelsAuthors(idProjects):
     return authorsNames,projects_depth,idProjects, removes 
 
 #FUNZIONE CHE CREA LA PRIMA TABELLA CONTENENTE I PROGETTI E GLI AUTORI DEI PANELS    
-def createTable():
+def createDataset():
     import modin.pandas as pd
     import time
     from datetime import date,datetime
@@ -186,7 +186,7 @@ def mergeAuthors(finalAuthorsNames):
     #--------------------CREAZIONE TABELLA UTENTI PANEL ATTUALI------------------------------------------------
     noDuplicates = list(dict.fromkeys(finalAuthorsNames))
 
-    shared = ex.shared_projects(noDuplicates)
+    shared = ex.created_panels(noDuplicates,finalAuthorsNames)
     (authors_loves, authors_views) = ex.lovesAndViews(noDuplicates,shared)
     stars_list = ex.star_count(noDuplicates)
     avatars = ex.has_avatar(noDuplicates)
