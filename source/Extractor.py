@@ -22,7 +22,6 @@ def featuresExtractor():
     #Estrazione features dei progetti    
     (remixed_list, project_depth_list, time_list, comments_list, likes_list, views_list) = project_stats(totProjects)
     createProjectsTable(totProjects,remixed_list,likes_list,views_list,comments_list,project_depth_list,time_list)
-    clean.cleanProjects()
     
     today = date.today()
     printTime = time.strftime("%H:%M:%S", time.gmtime(time.time()))
@@ -275,10 +274,10 @@ def shared_projects(authors_list):
         i = i + 1
     return shared
 
-def created_panels(authors_list):
+def created_panels(authors_list,finalAuthorsNames):
     panels = []
     for author in authors_list:
-        panels.append(authors_list.count(author))
+        panels.append(finalAuthorsNames.count(author))
     return panels
 
 def findProjects():
