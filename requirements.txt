@@ -24,7 +24,7 @@ joblib==0.14.1
 kiwisolver==1.2.0
 MarkupSafe==1.1.1
 matplotlib==3.2.1
-mechanize==0.4.5
+mechanize==0.4.6
 modin==0.7.3
 more-itertools==8.2.0
 nltk==3.6.6
